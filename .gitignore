@@ -16,3 +16,6 @@ Thumbs.db
 node_modules/
 *.log
 **/*.rs.bk
+.soroban
+.stellar
+
