@@ -12,12 +12,21 @@ import {
 	getTokenBalance,
 	placeBid,
 } from "./soroban";
+import {
+	Gavel,
+	Wallet,
+	Clock,
+	AlertCircle,
+	CheckCircle2,
+	RotateCw,
+	Coins,
+} from "lucide-react";
 
 // A default contract address for the user, which they can also change in the UI
 const DEFAULT_CONTRACT_ADDRESS =
-	import.meta.env.VITE_CONTRACT_ADDRESS
+	import.meta.env.VITE_CONTRACT_ADDRESS || "";
 const DEFAULT_TOKEN_ADDRESS =
-	import.meta.env.VITE_TOKEN_ADDRESS
+	import.meta.env.VITE_TOKEN_ADDRESS || "";
 
 function App() {
 	const [contractId, setContractId] = useState<string>(() => {
@@ -324,45 +333,17 @@ function App() {
 	return (
 		<div className="App">
 			{/* Header */}
-			<header className="app-header glass-panel">
+			<header className="app-header">
 				<div className="app-title-container">
 					<div className="logo-icon">
-						<svg
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="#fff"
-							strokeWidth="2.5"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						>
-							<title>Gavel Logo</title>
-							<path d="m15 5 4 4" />
-							<path d="M21.5 2.5a2.12 2.12 0 0 1 3 3L7 23H3v-4L18.5 3.5Z" />
-							<path d="m9 11 4 4" />
-							<path d="m5 15 4 4" />
-						</svg>
+						<Gavel />
 					</div>
-					<div className="logo-text">AETHER AUCTION</div>
+					<div className="logo-text">Auction Place</div>
 				</div>
 
 				{address ? (
 					<div className="wallet-badge">
-						<svg
-							width="18"
-							height="18"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="2"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						>
-							<title>Wallet Icon</title>
-							<rect width="20" height="14" x="2" y="5" rx="2" />
-							<line x1="2" x2="22" y1="10" y2="10" />
-						</svg>
+						<Wallet />
 						<span className="wallet-address">{address}</span>
 					</div>
 				) : (
@@ -379,10 +360,8 @@ function App() {
 
 			{/* Hero */}
 			<section className="hero-section">
-				<div className="hero-glow"></div>
 				<h1 className="hero-title">
-					Soroban <span className="gradient-text">No-Loss</span> Auction
-					Protocol
+					Soroban <span className="gradient-text">No-Loss</span> Auction Protocol
 				</h1>
 				<p className="hero-subtitle">
 					Bid on premium auctions securely. If you are outbid, your tokens are
@@ -392,18 +371,24 @@ function App() {
 
 			{/* Top Banner notifications */}
 			{error && (
-				<div className="error-message glass-panel">
-					<strong>Error:</strong> {error}
+				<div className="error-message">
+					<AlertCircle className="shrink-0 w-4 h-4" />
+					<div>
+						<strong>Error:</strong> {error}
+					</div>
 				</div>
 			)}
 			{success && (
-				<div className="success-message glass-panel">
-					<strong>Success:</strong> {success}
+				<div className="success-message">
+					<CheckCircle2 className="shrink-0 w-4 h-4" />
+					<div>
+						<strong>Success:</strong> {success}
+					</div>
 				</div>
 			)}
 
 			{/* Global Config Section */}
-			<section className="config-bar glass-panel">
+			<section className="config-bar">
 				<div className="input-group">
 					<label htmlFor="contract-id-input" className="input-label">
 						Auction Contract Address (Soroban)
@@ -430,14 +415,22 @@ function App() {
 						placeholder="Enter bidding token address..."
 					/>
 				</div>
-				<div style={{ display: "flex", alignItems: "flex-end", gap: "10px" }}>
+				<div style={{ display: "flex", alignItems: "flex-end" }}>
 					<button
 						type="button"
 						className="premium-btn btn-secondary"
 						onClick={refreshData}
 						disabled={loading}
+						style={{ width: "100%" }}
 					>
-						{loading ? <div className="loading-spinner" /> : "Sync Data"}
+						{loading ? (
+							<RotateCw className="loading-spinner" />
+						) : (
+							<>
+								<RotateCw className="w-4 h-4" />
+								Sync Data
+							</>
+						)}
 					</button>
 				</div>
 			</section>
@@ -448,13 +441,14 @@ function App() {
 					style={{
 						display: "flex",
 						justifyContent: "flex-end",
-						marginBottom: "20px",
-						gap: "15px",
+						gap: "12px",
+						fontSize: "13px",
 					}}
 				>
-					<span style={{ color: "var(--text-secondary)" }}>
+					<span style={{ color: "var(--muted-foreground)", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+						<Coins className="w-4 h-4 text-muted-foreground" />
 						Wallet Balance:{" "}
-						<strong style={{ color: "#fff" }}>
+						<strong style={{ color: "var(--foreground)", fontWeight: 600 }}>
 							{walletBalance.toString()} TOKENS
 						</strong>
 					</span>
@@ -467,40 +461,14 @@ function App() {
 				<main className="auction-list-section">
 					<div className="section-header">
 						<h2 className="section-title">
-							<svg
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								strokeWidth="2"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							>
-								<title>Clock Icon</title>
-								<circle cx="12" cy="12" r="10" />
-								<polyline points="12 6 12 12 16 14" />
-							</svg>
+							<Clock />
 							Live Auctions
 						</h2>
 					</div>
 
 					{auctions.length === 0 ? (
-						<div className="empty-state glass-panel">
-							<svg
-								width="48"
-								height="48"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="var(--text-muted)"
-								strokeWidth="1.5"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							>
-								<title>Alert Icon</title>
-								<circle cx="12" cy="12" r="10" />
-								<line x1="8" x2="16" y1="12" y2="12" />
-							</svg>
+						<div className="empty-state">
+							<AlertCircle className="w-8 h-8 text-muted-foreground" />
 							<div className="empty-title">No Auctions Found</div>
 							<div className="empty-desc">
 								There are currently no auctions registered on this contract
@@ -528,7 +496,7 @@ function App() {
 								}
 
 								return (
-									<div key={auction.id} className="auction-card glass-panel">
+									<div key={auction.id} className="auction-card">
 										<div className="auction-card-header">
 											<span className="auction-id-badge">
 												Auction #{auction.id}
@@ -558,7 +526,7 @@ function App() {
 												<span
 													className="info-value"
 													style={{
-														fontSize: "14px",
+														fontSize: "13px",
 														fontFamily: "var(--mono)",
 													}}
 												>
@@ -572,7 +540,7 @@ function App() {
 												<span
 													className="info-value"
 													style={{
-														color: ended ? "var(--text-muted)" : "#10b981",
+														color: ended ? "var(--muted-foreground)" : "var(--foreground)",
 													}}
 												>
 													{getRemainingTime(auction.deadline)}
@@ -581,29 +549,17 @@ function App() {
 										</div>
 
 										<div className="auction-card-footer">
-											<div style={{ textAlign: "left" }}>
-												<span
-													style={{
-														fontSize: "11px",
-														color: "var(--text-muted)",
-														display: "block",
-													}}
-												>
+											<div className="creator-info-container">
+												<span>
 													Creator:{" "}
-													<code style={{ fontSize: "10px" }}>
+													<code>
 														{auction.creator.substring(0, 6)}...
 														{auction.creator.substring(50)}
 													</code>
 												</span>
-												<span
-													style={{
-														fontSize: "11px",
-														color: "var(--text-muted)",
-														display: "block",
-													}}
-												>
+												<span>
 													Token:{" "}
-													<code style={{ fontSize: "10px" }}>
+													<code>
 														{auction.token.substring(0, 6)}...
 														{auction.token.substring(50)}
 													</code>
@@ -640,7 +596,7 @@ function App() {
 														disabled={actionLoading !== null}
 													>
 														{actionLoading === `bid-${auction.id}` ? (
-															<div className="loading-spinner" />
+															<RotateCw className="loading-spinner" />
 														) : (
 															"Bid"
 														)}
@@ -656,9 +612,9 @@ function App() {
 													disabled={actionLoading !== null}
 												>
 													{actionLoading === `finalize-${auction.id}` ? (
-														<div className="loading-spinner" />
+														<RotateCw className="loading-spinner" />
 													) : (
-														"Finalize Auction"
+														"Finalize"
 													)}
 												</button>
 											)}
@@ -671,9 +627,9 @@ function App() {
 													disabled={actionLoading !== null}
 												>
 													{actionLoading === `cancel-${auction.id}` ? (
-														<div className="loading-spinner" />
+														<RotateCw className="loading-spinner" />
 													) : (
-														"Cancel Auction"
+														"Cancel"
 													)}
 												</button>
 											)}
@@ -686,7 +642,7 @@ function App() {
 				</main>
 
 				{/* Sidebar Creation Panel */}
-				<aside className="sidebar-panel glass-panel">
+				<aside className="sidebar-panel">
 					<h2 className="form-title">Create Auction</h2>
 
 					<form
@@ -736,7 +692,7 @@ function App() {
 							disabled={actionLoading !== null || !address}
 						>
 							{actionLoading === "create" ? (
-								<div className="loading-spinner" />
+								<RotateCw className="loading-spinner" />
 							) : (
 								"Launch Auction"
 							)}
@@ -745,7 +701,7 @@ function App() {
 							<span
 								style={{
 									fontSize: "12px",
-									color: "var(--text-muted)",
+									color: "var(--muted-foreground)",
 									textAlign: "center",
 								}}
 							>
